@@ -3,7 +3,7 @@
 
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.windpanda</groupId>
+    <groupId>com.windpanda.jmapper-framework</groupId>
     <artifactId>jmapper-core</artifactId>
     <packaging>jar</packaging>
     <name>JMapper Framework</name>
