@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 import com.googlecode.jmapper.config.Constants;
 
 /**
- * JMap is the annotation that allows you to assign the current field with another, 
+ * JMap is the annotation that allows you to assign the current field with another,
  * it has three fields: value, attributes and classes.<br>
  * Value identifies the target field name.<br>
  * Attributes identifies a list of target fields name.<br>
@@ -38,4 +38,5 @@ public @interface JMap {
 	String value() default Constants.DEFAULT_FIELD_VALUE;
 	String[] attributes() default {};
 	Class<?>[] classes() default {};
+	boolean excluded() default false;
 }

@@ -19,12 +19,12 @@ package com.googlecode.jmapper.operations.simple;
 import static com.googlecode.jmapper.util.GeneralUtility.newLine;
 
 /**
- * This Class represents a basic operation. 
+ * This Class represents a basic operation.
  * for basic operation we mean an instruction of this type:<br>
  * <code>destination.setString(source.getString())</code>
- * <br>are excluded Collections, Maps, complex mappedObj and 
+ * <br>are excluded Collections, Maps, complex mappedObj and
  * all that you can not manage with a simple mapping.
- * 
+ *
  * @author Alessandro Vurro
  *
  */
@@ -32,11 +32,11 @@ public class BasicOperation extends ASimpleOperation{
 
 	public StringBuilder mapping() {
 
-		Object content = setDestination(applyImplicitConversion(info.getConversionType(), destinationType(), sourceType(), getSource()));
-				           
+		Object content = setDestination(applyImplicitConversion(info.getConversionType(), destinationType(), sourceType(), getNestedField()));
+
 		// add and return a mapping type control
 		return this.addMappingTypeControl(write(content,newLine));
-						
+
 	}
-	
+
 }

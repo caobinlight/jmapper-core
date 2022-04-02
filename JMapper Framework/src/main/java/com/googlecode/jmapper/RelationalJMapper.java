@@ -51,17 +51,17 @@ import static com.googlecode.jmapper.util.GeneralUtility.*;
  * For example:
  * <pre><code>
  * class Destination {
- * 
- *  &#64;JMap(  attributes={"field1Class1","field1Class2","field1Class3"}, 
+ *
+ *  &#64;JMap(  attributes={"field1Class1","field1Class2","field1Class3"},
  *   	  classes={Class1.class,Class2.class,Class3.class})
  *	 private String field1;
- *  &#64;JMap(  attributes={"field2Class1","field2Class2","field2Class3"}, 
+ *  &#64;JMap(  attributes={"field2Class1","field2Class2","field2Class3"},
  *   	  classes={Class1.class,Class2.class,Class3.class})
  *	 private String field2;
- *  &#64;JMap(  attributes={"field3Class1","field3Class2","field3Class3"}, 
+ *  &#64;JMap(  attributes={"field3Class1","field3Class2","field3Class3"},
  *   	  classes={Class1.class,Class2.class,Class3.class})
  *	 private String field3;
- *  
+ *
  *  // getter and setter
  * }
  * </code></pre>
@@ -73,9 +73,9 @@ import static com.googlecode.jmapper.util.GeneralUtility.*;
  *	Class1 class1 = new Class1("field1Class1", "field2Class1", "field3Class1");
  *	Class2 class2 = new Class2("field1Class2", "field2Class2", "field3Class2");
  *	Class3 class3 = new Class3("field1Class3", "field2Class3", "field3Class3");
- *		
+ *
  *	RelationalJMapper&lt;AnnotatedClass&gt; rm = new RelationalJMapper&lt;AnnotatedClass&gt;(AnnotatedClass.class);
- *		
+ *
  *	manyToOne = rm.manyToOne(class1);
  *	manyToOne = rm.manyToOne(class2);
  *	manyToOne = rm.manyToOne(class3);
@@ -84,13 +84,13 @@ import static com.googlecode.jmapper.util.GeneralUtility.*;
  * oneToMany example:
  * <pre><code>
  *         AnnotatedClass annotatedClass = new AnnotatedClass("field1", "field2", "field3");
- *		
+ *
  *	RelationalJMapper&lt;AnnotatedClass&gt; rm = new RelationalJMapper&lt;AnnotatedClass&gt;(AnnotatedClass.class);
- *		
+ *
  *	Class1 class1 = rm.setDestinationClass(Class1.class).oneToMany(annotatedClass);
  *	Class2 class2 = rm.setDestinationClass(Class2.class).oneToMany(annotatedClass);
  *	Class3 class3 = rm.setDestinationClass(Class3.class).oneToMany(annotatedClass);
- *  </code></pre>  
+ *  </code></pre>
  * For more information see {@link RelationalJMapper#manyToOne manyToOne} and {@link RelationalJMapper#oneToMany oneToMany} Methods<br>
  *
  * @author Alessandro Vurro
@@ -102,10 +102,10 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 
 	/** Configured Class*/
 	private Class<T> configuredClass;
-	
+
 	/** map that has the target class names as keys and relative JMapper as values */
 	private final HashMap<String,JMapper> relationalOneToManyMapper = new HashMap<String, JMapper>();
-	
+
 	/** map that has the target class names as keys and relative JMapper as values */
 	private final HashMap<String,JMapper> relationalManyToOneMapper = new HashMap<String, JMapper>();;
 
@@ -123,7 +123,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 			JmapperLog.error(e);
 		}
 	}
-	
+
 	/**
 	 * Takes in input the configured Class and the configuration in API format.
 	 * @param configuredClass configured class
@@ -132,7 +132,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 	public RelationalJMapper(final Class<T> configuredClass, JMapperAPI jmapperAPI){
 		this(configuredClass, jmapperAPI.toXStream().toString());
 	}
-	
+
 	/**
 	 * Takes in input only the configured Class and the xml mapping path or the xml as String format.
 	 * @param configuredClass configured class
@@ -140,7 +140,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 	 */
 	public RelationalJMapper(final Class<T> configuredClass, String xmlPath){
 		this.configuredClass = configuredClass;
-		
+
 		try {
 			init(xmlPath);
 		} catch (MalformedURLException e) {
@@ -153,7 +153,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 			JmapperLog.error(e);
 		}
 	}
-	
+
 	/**
 	 * This method initializes relational maps starting from XML.
 	 * @param xmlPath xml path
@@ -161,17 +161,17 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 	 * @throws IOException
 	 */
 	private void init(String xmlPath) throws MalformedURLException, IOException{
-		
+
 		XML xml = new XML(true, xmlPath);
 		if(!xml.isInheritedMapped(configuredClass))
 			Error.classNotMapped(configuredClass);
-		
+
 		for (Class<?> classe :getClasses(xml)){
 			relationalManyToOneMapper.put(classe.getName(), new JMapper(configuredClass, classe,ChooseConfig.DESTINATION, xmlPath));
 			relationalOneToManyMapper.put(classe.getName(), new JMapper(classe, configuredClass,ChooseConfig.SOURCE, xmlPath));
 		}
 	}
-	
+
 	/**
 	 * Returns all Target Classes contained in the XML.
 	 * @param xml xml to analyze
@@ -179,14 +179,14 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 	 */
 	private Set<Class<?>> getClasses(XML xml){
 		HashSet<Class<?>> result = new HashSet<Class<?>>();
-		
+
 		// in case of override only the last global configuration must be analyzed
 		Global global = null;
-		
+
 		for (Class<?> clazz : getAllsuperClasses(configuredClass)) {
 			// only if global configuration is null will be searched global configuration on super classes
 			if(isNull(global)){
-				  
+
 				global = xml.loadGlobals().get(clazz.getName());
 				if(!isNull(global)){
 					addClasses(global.getClasses(),result);
@@ -197,76 +197,76 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 									addClasses(attribute.getClasses(),result,attribute.getName());
 				}
 			}
-			
+
 			List<Attribute> attributes = xml.loadAttributes().get(clazz.getName());
-			
+
 			if(!isNull(attributes))
 				for (Attribute attribute : attributes)
-					if(    isNull(global) 
+					if(    isNull(global)
 						|| isPresent(global.getExcluded(), attribute.getName())
-					    || ( !isEmpty(global.getAttributes()) 
+					    || ( !isEmpty(global.getAttributes())
 						     && !isPresent(global.getAttributes(), new SimplyAttribute(attribute.getName()))
 						   )
 					   )
 					addClasses(attribute.getClasses(),result,attribute.getName());
 		}
-				
+
 		return result;
 	}
-	
+
 	/**
 	 * This method initializes relational maps
 	 */
 	private void init(){
-	
+
 		if(!Annotation.isInheritedMapped(configuredClass))
 			Error.classNotMapped(configuredClass);
-		
+
 		for (Class<?> classe :getClasses()){
 			relationalManyToOneMapper.put(classe.getName(), new JMapper(configuredClass, classe,ChooseConfig.DESTINATION));
 			relationalOneToManyMapper.put(classe.getName(), new JMapper(classe, configuredClass,ChooseConfig.SOURCE));
 		}
-	}	
-	
+	}
+
 	/**
 	 * Returns all Target Classes
 	 * @return a List of Target Classes
 	 */
 	private Set<Class<?>> getClasses() {
 		HashSet<Class<?>> result = new HashSet<Class<?>>();
-		
+
 		// in case of override only the last global configuration must be analyzed
 		JGlobalMap jGlobalMap = null;
-		
+
 		for (Class<?> clazz : getAllsuperClasses(configuredClass)) {
-			
+
 			// only if global configuration is null will be searched global configuration on super classes
 			if(isNull(jGlobalMap)){
-				
+
 				jGlobalMap = clazz.getAnnotation(JGlobalMap.class);
 				//if the field configuration is defined in the global map
 				if(!isNull(jGlobalMap)){
 					addClasses(jGlobalMap.classes(),result);
-					if(!isNull(jGlobalMap.excluded()))
-						for (Field field : getListOfFields(configuredClass)){ 
-							JMap jMap = field.getAnnotation(JMap.class);
-							if(!isNull(jMap)) 
-								for (String fieldName : jGlobalMap.excluded()) 
-									if(field.getName().equals(fieldName))
-										addClasses(jMap.classes(),result,field.getName());
-						}
-					
-					return result;
+//					if(!isNull(jGlobalMap.excluded()))
+//						for (Field field : getListOfFields(configuredClass)){
+//							JMap jMap = field.getAnnotation(JMap.class);
+//							if(!isNull(jMap))
+//								for (String fieldName : jGlobalMap.excluded())
+//									if(field.getName().equals(fieldName))
+//										addClasses(jMap.classes(),result,field.getName());
+//						}
+//
+//					return result;
 				}
 			}
 		}
-		
-		for (Field field : getListOfFields(configuredClass)){ 
+
+		for (Field field : getListOfFields(configuredClass)){
 			JMap jMap = field.getAnnotation(JMap.class);
 			if(!isNull(jMap)) addClasses(jMap.classes(),result,field.getName());
-		}	
-		
-		return result;	
+		}
+
+		return result;
 	}
 
 	/**
@@ -276,23 +276,23 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 	 * @param fieldName name of file, only for control purpose
 	 */
 	private void addClasses(Class<?>[] classes, HashSet<Class<?>> result, String fieldName){
-		
-		if(classes == null || classes.length==0)	
+
+		if(classes == null || classes.length==0)
 			Error.classesAbsent(fieldName, configuredClass);
-		
+
 		for (Class<?> classe : classes)	result.add(classe);
 	}
-	
+
 	/**
 	 * Adds to the result parameter all classes that aren't present in it
 	 * @param classes classes to control
 	 * @param result List to enrich
 	 */
 	private void addClasses(Class<?>[] classes, HashSet<Class<?>> result){
-		
-		if(isNull(classes) || classes.length==0)	
+
+		if(isNull(classes) || classes.length==0)
 			Error.globalClassesAbsent(configuredClass);
-		
+
 		for (Class<?> classe : classes)	result.add(classe);
 	}
 	/**
@@ -302,10 +302,10 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 	 * @return a new instance of Class given as input
 	 */
 	private <I> I logAndReturnNull(Exception exception){
-		JmapperLog.error(exception); 
+		JmapperLog.error(exception);
 		return null;
 	}
-	
+
 	/**
 	 * This method verifies that the destinationClass exists.
 	 * @param exception exception to handle
@@ -351,7 +351,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 		try{ return this.<T,S>getJMapper(relationalManyToOneMapper,source).getDestination(source); }
 		catch (Exception e) { return logAndReturnNull(e);}
 	}
-	
+
 	/**
 	 * This method returns a new instance of Configured Class with this setting:
 	 * <table summary ="">
@@ -372,7 +372,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 		try{ return this.<T,S>getJMapper(relationalManyToOneMapper,source).getDestinationWithoutControl(source); }
 		catch (Exception e) { return logAndReturnNull(e); }
 	}
-	
+
 	/**
 	 * This Method returns the configured instance given in input enriched with data contained in source given in input<br>
 	 * with this setting:
@@ -395,7 +395,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 		try{ return this.<T,S>getJMapper(relationalManyToOneMapper,source).getDestination(destination,source); }
 		catch (Exception e) { return logAndReturnNull(e); }
 	}
-	
+
 	/**
 	 * This Method returns the configured instance given in input enriched with data contained in source given in input<br>
 	 * with this setting:
@@ -431,7 +431,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 	 * </tr>
 	 * </table>
 	 * @param source instance of Target Class type that contains the data
-	 * @param mtSource type of mapping of source instance 
+	 * @param mtSource type of mapping of source instance
 	 * @return new instance of Configured Class
 	 * @see NullPointerControl
 	 * @see MappingType
@@ -440,7 +440,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 		try{ return this.<T,S>getJMapper(relationalManyToOneMapper,source).getDestination(source,mtSource); }
 		catch (Exception e) { return logAndReturnNull(e); }
 	}
-	
+
 	/**
 	 * This method returns a new instance of Configured Class with this setting:
 	 * <table summary ="">
@@ -454,7 +454,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 	 * </table>
 	 * @param source instance of Target Class type that contains the data
 	 * @param nullPointerControl type of null pointer control
-	 * @param mtSource type of mapping of source instance 
+	 * @param mtSource type of mapping of source instance
 	 * @return new instance of Configured Class
 	 * @see NullPointerControl
 	 * @see MappingType
@@ -463,7 +463,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 		try{ return this.<T,S>getJMapper(relationalManyToOneMapper,source).getDestination(source,nullPointerControl,mtSource); }
 		catch (Exception e) { return logAndReturnNull(e); }
 	}
-	
+
 	/**
 	 * This Method returns the configured instance given in input enriched with data contained in source given in input<br>
 	 * with this setting:
@@ -479,7 +479,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 	 * @param destination instance of Configured Class type to enrich
 	 * @param source instance of Target Class type that contains the data
 	 * @param mtDestination type of mapping of destination instance
-	 * @param mtSource type of mapping of source instance 
+	 * @param mtSource type of mapping of source instance
 	 * @return destination enriched
 	 * @see NullPointerControl
 	 * @see MappingType
@@ -488,7 +488,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 		try{ return this.<T,S>getJMapper(relationalManyToOneMapper,source).getDestination(destination, source, mtDestination,mtSource); }
 		catch (Exception e) { return logAndReturnNull(e); }
 	}
-	
+
 	/**
 	 * This Method returns the configured instance given in input enriched with data contained in source given in input<br>
 	 * with this setting:
@@ -505,7 +505,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 	 * @param source instance of Target Class type that contains the data
 	 * @param nullPointerControl type of null pointer control
 	 * @param mtDestination type of mapping of destination instance
-	 * @param mtSource type of mapping of source instance 
+	 * @param mtSource type of mapping of source instance
 	 * @return destination enriched
 	 * @see NullPointerControl
 	 * @see MappingType
@@ -514,7 +514,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 		try{ return this.<T,S>getJMapper(relationalManyToOneMapper,source).getDestination(destination, source, nullPointerControl, mtDestination, mtSource); }
 		catch (Exception e) { return logAndReturnNull(e); }
 	}
-	
+
 	/**
 	 * This method returns a new instance of Target Class with this setting:
 	 * <table summary ="">
@@ -536,8 +536,8 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 		try{ return this.<D,T>getJMapper(relationalOneToManyMapper,destinationClass).getDestination(source); }
 		catch (Exception e) { return (D) this.destinationClassControl(e,destinationClass); }
 	}
-	
-	
+
+
 	/**
 	 * This method returns a new instance of Target Class with this setting:
 	 * <table summary ="">
@@ -558,7 +558,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 		try{ return this.<D,T>getJMapper(relationalOneToManyMapper,destinationClass).getDestinationWithoutControl(source); }
 		catch (Exception e) { return (D) this.destinationClassControl(e,destinationClass); }
 	}
-	
+
 	/**
 	 * This Method returns the destination given in input enriched with data contained in source given in input<br>
 	 * with this setting:
@@ -581,7 +581,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 		try{ return this.<D,T>getJMapper(relationalOneToManyMapper,destination.getClass()).getDestination(destination,source); }
 		catch (Exception e) { return this.logAndReturnNull(e); }
 	}
-	
+
 	/**
 	 * This Method returns the destination given in input enriched with data contained in source given in input<br>
 	 * with this setting:
@@ -627,7 +627,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 		try{ return this.<D,T>getJMapper(relationalOneToManyMapper,destinationClass).getDestination(source,mtSource); }
 		catch (Exception e) { return (D) this.destinationClassControl(e,destinationClass); }
 	}
-	
+
 	/**
 	 * This method returns a new instance of Target Class with this setting:
 	 * <table summary ="">
@@ -650,7 +650,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 		try{ return this.<D,T>getJMapper(relationalOneToManyMapper,destinationClass).getDestination(source,nullPointerControl,mtSource); }
 		catch (Exception e) { return (D) this.destinationClassControl(e,destinationClass); }
 	}
-	
+
 	/**
 	 * This Method returns the destination given in input enriched with data contained in source given in input<br>
 	 * with this setting:
@@ -666,7 +666,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 	 * @param destination instance of Target Class to enrich
 	 * @param source instance of Configured Class that contains the data
 	 * @param mtDestination type of mapping of destination instance
-	 * @param mtSource type of mapping of source instance 
+	 * @param mtSource type of mapping of source instance
 	 * @return destination enriched
 	 * @see NullPointerControl
 	 * @see MappingType
@@ -675,7 +675,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 		try{ return this.<D,T>getJMapper(relationalOneToManyMapper,destination.getClass()).getDestination(destination, source, mtDestination,mtSource); }
 		catch (Exception e) { return this.logAndReturnNull(e); }
 	}
-	
+
 	/**
 	 * This Method returns the destination given in input enriched with data contained in source given in input<br>
 	 * with this setting:
@@ -692,7 +692,7 @@ public final class RelationalJMapper<T> implements IRelationalJMapper<T>{
 	 * @param source instance of Configured Class that contains the data
 	 * @param nullPointerControl type of null pointer control
 	 * @param mtDestination type of mapping of destination instance
-	 * @param mtSource type of mapping of source instance 
+	 * @param mtSource type of mapping of source instance
 	 * @return destination enriched
 	 * @see NullPointerControl
 	 * @see MappingType
